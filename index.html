@@ -95,5 +95,11 @@
 
   <!-- Main app script -->
   <script src="script.js"></script>
+  <script>
+  // In development, override Puter settings to skip disclaimers
+  window.puter = window.puter || {};
+  // Possible setting name:
+  window.puter.skipDisclaimer = true;
+</script>
 </body>
 </html>
