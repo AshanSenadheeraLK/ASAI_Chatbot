@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AS AI Chat</title>
+
+  <!-- External AI library script (stealth) -->
+  <script src="https://js.puter.com/v2/" defer></script>
+
+  <!-- 3D library & animation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+
+  <!-- Optional but included (Emoji picker & icons) -->
+  <script src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1.12.0/dist/index.js" type="module"></script>
+  <link href="https://cdn.jsdelivr.net/npm/emoji-picker-element@1.12.0/dist/style.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+  <!-- Our custom stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- 3D background -->
+  <canvas id="visualization-canvas"></canvas>
+
+  <!-- Chat container -->
+  <div class="chat-container">
+    <div class="chat-header">
+      <h2>AS AI Chat</h2>
+      <p>Ask anything to our invisible AI service</p>
+      <div class="header-controls">
+        <button id="clear-chat" title="Clear Chat">
+          <i class="fas fa-trash"></i>
+        </button>
+        <button id="toggle-theme" title="Toggle Theme">
+          <i class="fas fa-moon"></i>
+        </button>
+        <button id="toggle-visuals" title="Toggle Visualization">
+          <i class="fas fa-cube"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="chat-body" id="chat-body"></div>
+
+    <div class="chat-input">
+      <div class="input-features">
+        <button id="voice-input" title="Voice Input">
+          <i class="fas fa-microphone"></i>
+        </button>
+        <input
+          type="text"
+          id="user-input"
+          placeholder="Type your question..."
+        />
+        <button id="emoji-picker-btn" title="Emoji Picker">
+          <i class="fas fa-smile"></i>
+        </button>
+        <button id="file-upload" title="Attach File">
+          <i class="fas fa-paperclip"></i>
+        </button>
+      </div>
+      <button id="send-btn" title="Send">
+        <i class="fas fa-rocket"></i> Send
+      </button>
+    </div>
+  </div>
+
+  <!-- Optional floating tools -->
+  <div class="floating-tools">
+    <button class="tool-button" id="visualize-btn" title="Visualize Data">
+      <i class="fas fa-chart-bar"></i>
+    </button>
+    <button class="tool-button" id="collaborate-btn" title="Collaborate">
+      <i class="fas fa-users"></i>
+    </button>
+    <button class="tool-button" id="settings-btn" title="Settings">
+      <i class="fas fa-cog"></i>
+    </button>
+  </div>
+
+  <!-- Analytics panel (optional) -->
+  <div class="analytics-panel" id="analytics-panel">
+    <h3>Conversation Analytics</h3>
+    <div id="sentiment-graph"></div>
+    <div id="response-time"></div>
+    <div id="word-cloud"></div>
+  </div>
+
+  <!-- Hidden emoji picker container -->
+  <div class="emoji-picker-container" id="emoji-picker-container" style="display: none;">
+    <emoji-picker></emoji-picker>
+  </div>
+
+  <!-- Main app script -->
+  <script src="script.js"></script>
+</body>
+</html>
