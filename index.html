@@ -2,98 +2,59 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AS AI Chat</title>
+  <!-- Mobile-first viewport -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AS AI Assistant</title>
 
-  <!-- External AI library script (stealth) -->
+  <!-- Puter.js for free Claude 3.5 Sonnet access -->
   <script src="https://js.puter.com/v2/" defer></script>
 
-  <!-- 3D library & animation -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+  <!-- Font Awesome (for icons) -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+  />
 
-  <!-- Optional but included (Emoji picker & icons) -->
-  <script src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1.12.0/dist/index.js" type="module"></script>
-  <link href="https://cdn.jsdelivr.net/npm/emoji-picker-element@1.12.0/dist/style.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <!-- Highlight.js for code syntax coloring -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css"
+  />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
 
-  <!-- Our custom stylesheet -->
-  <link rel="stylesheet" href="style.css">
+  <!-- Custom styles -->
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- 3D background -->
-  <canvas id="visualization-canvas"></canvas>
+  <header class="app-header">
+    <div class="header-title">
+      <h1>AS AI Assistant</h1>
+      <p>Any chat will not be saved or used to train.</p>
+      <span class="version" id="version" style="font-weight: bold; decoration: italic">Version</span> <span class="version-number" style="font-weight: bold; color:yellow">1.0.0</span> <span class="version-tag" style="font-weight: bold; color:yellowgreen">Pre-release</span>
+    </div>
+  </header>
 
-  <!-- Chat container -->
-  <div class="chat-container">
-    <div class="chat-header">
-      <h2>AS AI Chat</h2>
-      <p>Ask anything to our invisible AI service</p>
-      <div class="header-controls">
-        <button id="clear-chat" title="Clear Chat">
-          <i class="fas fa-trash"></i>
-        </button>
-        <button id="toggle-theme" title="Toggle Theme">
-          <i class="fas fa-moon"></i>
-        </button>
-        <button id="toggle-visuals" title="Toggle Visualization">
-          <i class="fas fa-cube"></i>
-        </button>
-      </div>
+  <main class="chat-container">
+    <!-- Chat area -->
+    <div class="chat-area" id="chat-area">
+      <!-- Messages added dynamically by script.js -->
     </div>
 
-    <div class="chat-body" id="chat-body"></div>
-
-    <div class="chat-input">
-      <div class="input-features">
-        <button id="voice-input" title="Voice Input">
-          <i class="fas fa-microphone"></i>
-        </button>
-        <input
-          type="text"
-          id="user-input"
-          placeholder="Type your question..."
-        />
-        <button id="emoji-picker-btn" title="Emoji Picker">
-          <i class="fas fa-smile"></i>
-        </button>
-        <button id="file-upload" title="Attach File">
-          <i class="fas fa-paperclip"></i>
-        </button>
-      </div>
-      <button id="send-btn" title="Send">
-        <i class="fas fa-rocket"></i> Send
+    <!-- Input row (with textarea) -->
+    <div class="input-container">
+      <textarea
+        id="user-input"
+        class="chat-input"
+        rows="4"
+        placeholder="Type your message (Shift+Enter for a newline)..."
+      ></textarea>
+      <button id="send-btn" class="send-button" title="Send">
+        <i class="fa-solid fa-paper-plane"></i>
       </button>
     </div>
-  </div>
+  </main>
 
-  <!-- Optional floating tools -->
-  <div class="floating-tools">
-    <button class="tool-button" id="visualize-btn" title="Visualize Data">
-      <i class="fas fa-chart-bar"></i>
-    </button>
-    <button class="tool-button" id="collaborate-btn" title="Collaborate">
-      <i class="fas fa-users"></i>
-    </button>
-    <button class="tool-button" id="settings-btn" title="Settings">
-      <i class="fas fa-cog"></i>
-    </button>
-  </div>
-
-  <!-- Analytics panel (optional) -->
-  <div class="analytics-panel" id="analytics-panel">
-    <h3>Conversation Analytics</h3>
-    <div id="sentiment-graph"></div>
-    <div id="response-time"></div>
-    <div id="word-cloud"></div>
-  </div>
-
-  <!-- Hidden emoji picker container -->
-  <div class="emoji-picker-container" id="emoji-picker-container" style="display: none;">
-    <emoji-picker></emoji-picker>
-  </div>
-
-  <!-- Main app script -->
+  <!-- Main script -->
   <script src="script.js"></script>
 </body>
 </html>
