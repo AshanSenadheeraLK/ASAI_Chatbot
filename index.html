@@ -35,9 +35,22 @@
         <span class="version-tag">Pre-release</span>
       </p>
     </div>
+    <div id="user-info" class="user-info hidden">
+      <img id="profile-picture" class="profile-picture" alt="avatar" />
+      <span id="user-name"></span>
+      <span id="user-email"></span>
+      <button id="logout-btn" class="logout-btn">Sign Out</button>
+    </div>
   </header>
 
-  <main class="chat-container">
+  <div id="auth-container" class="auth-container">
+    <input id="auth-username" type="text" placeholder="Username" />
+    <input id="auth-email" type="email" placeholder="E-mail" />
+    <input id="auth-password" type="password" placeholder="Password" />
+    <button id="login-btn">Sign In</button>
+  </div>
+
+  <main class="chat-container hidden">
     <!-- Chat area -->
     <div class="chat-area" id="chat-area">
       <!-- Messages added dynamically by script.js -->
@@ -51,6 +64,16 @@
         rows="4"
         placeholder="Type your message (Shift+Enter for a newline)..."
       ></textarea>
+      <input id="image-upload" type="file" accept="image/*" hidden />
+      <button id="upload-btn" class="tool-button" title="Upload image">
+        <i class="fa-solid fa-upload"></i>
+      </button>
+      <button id="generate-image-btn" class="tool-button" title="Generate image">
+        <i class="fa-solid fa-image"></i>
+      </button>
+      <button id="tts-toggle" class="tool-button" title="Text to speech">
+        <i class="fa-solid fa-volume-high"></i>
+      </button>
       <button id="send-btn" class="send-button" title="Send">
         <i class="fa-solid fa-paper-plane"></i>
       </button>

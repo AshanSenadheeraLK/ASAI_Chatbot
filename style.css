@@ -52,6 +52,56 @@ html, body {
 }
 
 /* =========================
+   AUTH / USER INFO
+========================= */
+.auth-container {
+  display: flex;
+  gap: 8px;
+  padding: 10px;
+  justify-content: center;
+  background: #202123;
+}
+.auth-container input {
+  padding: 6px;
+  border: 1px solid #565869;
+  border-radius: 4px;
+  background: #343541;
+  color: #ececf1;
+}
+.auth-container button {
+  background: #19c37d;
+  border: none;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.user-info {
+  margin-top: 8px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+}
+.user-info.hidden,
+.auth-container.hidden {
+  display: none;
+}
+.profile-picture {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+}
+.logout-btn {
+  background: #565869;
+  border: none;
+  color: #ececf1;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* =========================
    CHAT CONTAINER
 ========================= */
 .chat-container {
@@ -64,6 +114,9 @@ html, body {
   border-radius: 8px;
   flex: 1;
   overflow: hidden;
+}
+.chat-container.hidden {
+  display: none;
 }
 
 .chat-area {
@@ -173,6 +226,25 @@ html, body {
   font-size: 1rem;
   outline: none;
   resize: none; /* no manual resize handle */
+}
+.tool-button {
+  width: 40px;
+  height: 40px;
+  background: #565869;
+  color: #ececf1;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tool-button:hover {
+  background: #4b4d5a;
+}
+.tool-button.active {
+  background: #19c37d;
 }
 
 .send-button {

@@ -4,13 +4,35 @@ document.addEventListener("DOMContentLoaded", () => {
   const chatArea  = document.getElementById("chat-area");
   const userInput = document.getElementById("user-input");
   const sendBtn   = document.getElementById("send-btn");
+  const chatContainer = document.querySelector('.chat-container');
   const versionEl = document.querySelector(".version-number");
   const tagEl = document.querySelector(".version-tag");
+  const authContainer = document.getElementById("auth-container");
+  const loginBtn = document.getElementById("login-btn");
+  const usernameInput = document.getElementById("auth-username");
+  const emailInput = document.getElementById("auth-email");
+  const passwordInput = document.getElementById("auth-password");
+  const userInfo = document.getElementById("user-info");
+  const userNameEl = document.getElementById("user-name");
+  const userEmailEl = document.getElementById("user-email");
+  const profilePicEl = document.getElementById("profile-picture");
+  const logoutBtn = document.getElementById("logout-btn");
+  const imageUploadInput = document.getElementById("image-upload");
+  const uploadBtn = document.getElementById("upload-btn");
+  const generateImageBtn = document.getElementById("generate-image-btn");
+  const ttsToggle = document.getElementById("tts-toggle");
   if (versionEl) versionEl.textContent = APP_VERSION.split(" ")[0];
   if (tagEl) tagEl.textContent = APP_VERSION.split(" ").slice(1).join(" ");
 
   // ====== AI Service (via Puter.js) ======
   const aiService = window.puter?.ai || null;
+  let ttsEnabled = false;
+
+  function speak(text) {
+    try {
+      window.puter.ai.textToSpeech(text);
+    } catch (e) {}
+  }
 
   // ====== Extended System Prompt ======
   const SYSTEM_PROMPT = `
@@ -62,6 +84,7 @@ You are an anonymous AI assistant.
           hljs.highlightElement(block);
         });
       }, 0);
+      if (ttsEnabled) speak(text);
     }
   }
 
@@ -87,7 +110,7 @@ Assistant:
 
     // Request (streaming)
     const aiStream = await aiService.chat(finalPrompt, {
-      model: "claude-3-5-sonnet",
+      model: "gpt-3.5-turbo",
       stream: true
     });
 
@@ -163,6 +186,76 @@ Assistant:
     }
   });
 
-  // Initial greeting
-  appendMessage("Hello! How can I help you today?", "bot");
+  // Login & logout
+  async function handleLogin() {
+    try {
+      const user = await window.puter.auth.login({
+        username: usernameInput.value,
+        email: emailInput.value,
+        password: passwordInput.value
+      });
+      authContainer.classList.add('hidden');
+      userInfo.classList.remove('hidden');
+      chatContainer.classList.remove('hidden');
+      userNameEl.textContent = user.name || user.username;
+      userEmailEl.textContent = user.email;
+      if (user.avatarUrl) profilePicEl.src = user.avatarUrl;
+      appendMessage('Hello! How can I help you today?', 'bot');
+    } catch (e) {
+      alert('Login failed');
+    }
+  }
+
+  function handleLogout() {
+    window.puter.auth.logout();
+    userInfo.classList.add('hidden');
+    authContainer.classList.remove('hidden');
+    chatContainer.classList.add('hidden');
+    chatArea.innerHTML = '';
+    appendMessage('Please sign in to start chatting.', 'bot');
+  }
+
+  loginBtn.addEventListener('click', handleLogin);
+  logoutBtn.addEventListener('click', handleLogout);
+
+  // Image upload
+  uploadBtn.addEventListener('click', () => imageUploadInput.click());
+  imageUploadInput.addEventListener('change', async () => {
+    const file = imageUploadInput.files[0];
+    if (!file) return;
+    appendMessage('Processing image...', 'bot');
+    const bubbles = document.querySelectorAll('.bot.message');
+    const wait = bubbles[bubbles.length-1];
+    try {
+      const text = await aiService.extractText(file);
+      const objects = await aiService.detectObjects(file);
+      const vision = await aiService.vision(file, { model: 'gpt-4o' });
+      wait.remove();
+      appendMessage(`Extracted Text: ${text}\nObjects: ${objects.join(', ')}\nVision: ${vision}`, 'bot');
+    } catch (e) {
+      wait.textContent = 'Image analysis failed';
+    }
+  });
+
+  // Image generation via DALL·E 3
+  generateImageBtn.addEventListener('click', async () => {
+    const promptText = prompt('Describe the image to generate:');
+    if (!promptText) return;
+    appendMessage(`Generating image for: ${promptText}`, 'bot');
+    try {
+      const url = await aiService.generateImage(promptText, { model: 'dalle-3' });
+      appendMessage(`<img src="${url}" alt="${promptText}" />`, 'bot');
+    } catch (e) {
+      appendMessage('Image generation failed.', 'bot');
+    }
+  });
+
+  // Text to speech toggle
+  ttsToggle.addEventListener('click', () => {
+    ttsEnabled = !ttsEnabled;
+    ttsToggle.classList.toggle('active', ttsEnabled);
+  });
+
+  // Initial state
+  appendMessage("Please sign in to start chatting.", "bot");
 });
