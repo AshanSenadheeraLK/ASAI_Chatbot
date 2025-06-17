@@ -1,41 +1,49 @@
 /* =========================
    RESET + BASE STYLES
 ========================= */
-* {
+*,
+*::before,
+*::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
 }
 
 html, body {
   width: 100%;
   height: 100%;
-  background: linear-gradient(145deg, #f0f0f0, #dee2e6);
-  overflow: hidden;
+  background: linear-gradient(120deg, #e5e9f7 0%, #f8fafc 100%);
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
+  color: #213555;
 }
 
 /* =========================
    HEADER
 ========================= */
 .app-header {
-  background: linear-gradient(135deg, #673ab7, #3f51b5, #2196f3);
-  padding: 20px;
+  background: linear-gradient(135deg, #6f7bf7 0%, #5eead4 100%);
+  padding: 28px 16px 20px 16px;
   color: #fff;
   text-align: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 18px rgba(111,123,247,0.13);
+  border-bottom-left-radius: 18px;
+  border-bottom-right-radius: 18px;
 }
 
 .header-title h1 {
-  font-size: 1.4rem;
-  margin-bottom: 5px;
+  font-size: 2rem;
+  letter-spacing: 1px;
+  font-weight: 700;
+  margin-bottom: 6px;
 }
 
 .header-title p {
-  font-size: 0.85rem;
+  font-size: 1rem;
   opacity: 0.85;
+  letter-spacing: 0.2px;
 }
 
 /* =========================
@@ -45,94 +53,101 @@ html, body {
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 1100px;
-  margin: 10px auto;
-  background: #fafafa;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  border-radius: 8px;
+  max-width: 680px;
+  margin: 24px auto 0 auto;
+  background: rgba(255,255,255,0.97);
+  box-shadow: 0 8px 32px rgba(31,41,55,0.12), 0 1.5px 8px rgba(85,85,85,0.06);
+  border-radius: 18px;
   flex: 1;
   overflow: hidden;
+  min-height: 420px;
 }
 
 .chat-area {
   flex: 1;
-  padding: 20px;
+  padding: 32px 20px 24px 20px;
   overflow-y: auto;
-  background: #fdfdfd;
+  background: transparent;
+  scroll-behavior: smooth;
 }
 
 /* =========================
    MESSAGE BUBBLES
 ========================= */
 .message {
-  display: inline-block;
   clear: both;
-  margin-bottom: 14px;
-  line-height: 1.4;
-  font-size: 0.95rem;
-  max-width: 90%;
-  word-wrap: break-word;
-  border-radius: 6px;
-  padding: 12px;
+  margin-bottom: 18px;
+  line-height: 1.6;
+  font-size: 1rem;
+  max-width: 80%;
+  word-break: break-word;
+  border-radius: 14px;
+  padding: 15px 20px;
   position: relative;
-
-  /* Allow multiline in normal text (outside code blocks) */
+  transition: background 0.2s;
+  box-shadow: 0 2px 10px rgba(55,94,148,0.04);
   white-space: pre-wrap;
 }
 
+/* Bot Message */
 .message.bot {
-  background: #7d20ca;
-  color: #ffffff;
-  float: left;
+  background: linear-gradient(100deg, #f5f7fa 60%, #d6e6ff 100%);
+  color: #4b4b6b;
+  align-self: flex-start;
+  border-bottom-left-radius: 3px;
 }
 
+/* User Message */
 .message.user {
-  background: #3f51b5;
+  background: linear-gradient(100deg, #7fbcfb 0%, #5eead4 90%);
   color: #fff;
-  float: right;
+  align-self: flex-end;
+  border-bottom-right-radius: 3px;
   text-align: right;
+  margin-left: auto;
+  box-shadow: 0 4px 14px rgba(94,234,212,0.09);
 }
 
 .message .timestamp {
   display: block;
-  font-size: 0.7rem;
-  color: #eeff00;
-  margin-top: 5px;
+  font-size: 0.74rem;
+  color: #a0aec0;
+  margin-top: 8px;
 }
 
 /* Code blocks and copy button */
-.message.bot pre, .message.bot code {
-  background: #fbfbfb;
-  border-radius: 4px;
-  padding: 8px;
-  font-size: 0.9rem;
-  line-height: 1.4;
-  display: block;
+.message pre, .message code {
+  background: #f0f3fa;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 0.93rem;
+  line-height: 1.5;
+  margin: 12px 0 0 0;
   overflow-x: auto;
-  margin: 10px 0;
-  position: relative;
+  font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
+  border: 1px solid #e6e9f0;
 }
 
 .copy-btn {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  background: #e9ecef;
+  top: 12px;
+  right: 12px;
+  background: #e3eafc;
   border: none;
-  padding: 4px 8px;
-  font-size: 0.75rem;
+  padding: 6px 14px;
+  font-size: 0.85rem;
   border-radius: 4px;
   cursor: pointer;
-  color: #333;
-  display: none; /* shown on hover */
+  color: #4763d4;
+  display: none;
+  transition: background 0.15s;
+  box-shadow: 0 1px 3px rgba(111,123,247,0.05);
 }
-
 .copy-btn:hover {
-  background: #d8d8d8;
+  background: #d0d8f6;
 }
 
-/* Reveal copy button on pre:hover */
-.message.bot pre:hover .copy-btn {
+.message pre:hover .copy-btn {
   display: inline-block;
 }
 
@@ -141,67 +156,122 @@ html, body {
 ========================= */
 .input-container {
   display: flex;
-  border-top: 1px solid #ccc;
-  background: #fff;
-  padding: 10px;
+  border-top: 1px solid #e0e6ee;
+  background: #f7fafd;
+  padding: 14px 14px 14px 16px;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .chat-input {
   flex: 1;
-  border: 1px solid #ccc;
-  padding: 8px 10px;
-  border-radius: 6px;
+  border: 1.5px solid #d6e6ff;
+  padding: 10px 14px;
+  border-radius: 8px;
   font-size: 1rem;
+  background: #fff;
+  color: #213555;
   outline: none;
-  resize: none; /* no manual resize handle */
+  transition: border 0.2s;
+  min-height: 44px;
+  resize: none;
+}
+
+.chat-input:focus {
+  border: 1.5px solid #6f7bf7;
+  background: #f4f6fb;
 }
 
 .send-button {
-  width: 50px;
-  height: 40px;
-  background: #2196f3;
+  width: 48px;
+  height: 44px;
+  background: linear-gradient(135deg, #6f7bf7, #5eead4);
   color: #fff;
   border: none;
-  border-radius: 6px;
-  font-size: 1.1rem;
+  border-radius: 8px;
+  font-size: 1.35rem;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(111,123,247,0.09);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .send-button:hover {
-  background: #1976d2;
+  background: linear-gradient(135deg, #5eead4, #6f7bf7);
+  box-shadow: 0 4px 14px rgba(94,234,212,0.12);
 }
 
 /* =========================
-   SCROLLBAR (OPTIONAL)
+   SCROLLBAR (REFINED)
 ========================= */
 .chat-area::-webkit-scrollbar {
-  width: 6px;
+  width: 7px;
 }
 .chat-area::-webkit-scrollbar-track {
-  background: #f2f2f2;
+  background: #f4f6fb;
+  border-radius: 5px;
 }
 .chat-area::-webkit-scrollbar-thumb {
-  background: #ccc;
-  border-radius: 3px;
+  background: #c4d3f6;
+  border-radius: 5px;
+  transition: background 0.2s;
+}
+.chat-area::-webkit-scrollbar-thumb:hover {
+  background: #a3bffa;
 }
 
 /* =========================
    RESPONSIVE
 ========================= */
-@media (max-width: 600px) {
+@media (max-width: 720px) {
+  .chat-container {
+    max-width: 98vw;
+    margin: 16px 1vw 0 1vw;
+    min-height: 290px;
+  }
+  .chat-area {
+    padding: 18px 6px 14px 6px;
+  }
   .header-title h1 {
-    font-size: 1.2rem;
+    font-size: 1.25rem;
   }
   .header-title p {
-    font-size: 0.8rem;
+    font-size: 0.93rem;
   }
-  .message {
-    font-size: 0.9rem;
+}
+
+@media (max-width: 480px) {
+  .app-header {
+    padding: 18px 6px 12px 6px;
+    border-radius: 0 0 10px 10px;
+  }
+  .chat-area {
+    padding: 10px 2px 8px 2px;
+  }
+  .input-container {
+    padding: 8px 4px 8px 4px;
+    gap: 6px;
   }
   .chat-input {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
+    min-height: 38px;
   }
+  .send-button {
+    width: 38px;
+    height: 38px;
+    font-size: 1rem;
+  }
+}
+
+/* =========================
+   ANIMATIONS (OPTIONAL)
+========================= */
+.message {
+  animation: fadein 0.4s;
+}
+@keyframes fadein {
+  from { opacity: 0; transform: translateY(16px);}
+  to   { opacity: 1; transform: translateY(0);}
 }
