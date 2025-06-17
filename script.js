@@ -112,7 +112,7 @@ Assistant:
 
     // Request (streaming)
     const aiStream = await aiService.chat(finalPrompt, {
-      model: "claude-3-5-sonnet",
+      model: "o3-mini",
       stream: true
     });
 
