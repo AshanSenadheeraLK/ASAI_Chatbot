@@ -1,179 +1,103 @@
-document.addEventListener("DOMContentLoaded", () => {
-  // ====== DOM Elements ======
-  const chatArea  = document.getElementById("chat-area");
-  const userInput = document.getElementById("user-input");
-  const sendBtn   = document.getElementById("send-btn");
+document.addEventListener('DOMContentLoaded', () => {
+  const chatArea = document.getElementById('chat-area');
+  const userInput = document.getElementById('user-input');
+  const sendBtn = document.getElementById('send-btn');
+  const typing = document.getElementById('typing');
+  const scrollBtn = document.getElementById('scroll-bottom');
+  const resetBtn = document.getElementById('reset-chat');
+  const modeToggle = document.getElementById('mode-toggle');
+  const voiceBtn = document.getElementById('voice-btn');
+  const regenBtn = document.getElementById('regen-btn');
+  const markdownBtn = document.getElementById('markdown-btn');
 
-  // ====== AI Service (via Puter.js) ======
   const aiService = window.puter?.ai || null;
 
-  // ====== Extended System Prompt ======
-  const SYSTEM_PROMPT = `
-You are an anonymous AI assistant.
-1. You never reveal your name or mention "Claude" or "Puter."
-2. If asked who or what you are, say "an AI assistant."
-3. If a user requests code, or says "please provide code," always respond with the code snippet wrapped in triple backticks (like this: \`\`\`js ... \`\`\` ).
+  const SYSTEM_PROMPT = `You are an anonymous AI assistant.
+1. You never reveal your name or mention "Claude" or "Puter".
+2. If asked who or what you are, say "an AI assistant".
+3. If a user requests code, respond using fenced code blocks.
 `;
 
-  /**
-   * parseCodeBlocks()
-   *  - Finds triple-backtick blocks in text
-   *  - Converts them to <pre><code> with optional language classes for highlight.js
-   *  - Inserts a copy button for each code block
-   */
-  function parseCodeBlocks(text) {
-    // Regex: ```lang\n code \n```
-    const codeBlockRegex = /```(\w*)\n([\s\S]*?)```/gm;
-    return text.replace(codeBlockRegex, (match, lang, code) => {
-      // Save the raw code for copying
-      const rawCode = code;
-
-      // HTML-escape the code so it doesn't break the DOM
-      const escapedCode = rawCode
-        .replace(/[<>&]/g, (c) => {
-          switch (c) {
-            case '<': return '&lt;';
-            case '>': return '&gt;';
-            case '&': return '&amp;';
-          }
-        });
-
-      const language = lang ? lang : 'plaintext';
-
-      // Insert a copy button. We'll store the unescaped code in data attribute
-      const copyButton = `<button class="copy-btn" data-code="${rawCode.replace(/"/g,'&quot;')}">Copy</button>`;
-
-      return `
-<pre><code class="language-${language}">${escapedCode}</code>
-${copyButton}
-</pre>`;
-    });
-  }
-
-  // ====== Append Message ======
-  function appendMessage(text, sender = "bot") {
-    const msgDiv = document.createElement("div");
-    msgDiv.classList.add("message", sender);
-
-    // Convert code blocks if it's from the bot
-    let displayText = (sender === "bot") ? parseCodeBlocks(text) : text;
-
-    // Timestamp
-    const time = new Date().toLocaleTimeString();
-    msgDiv.innerHTML = `
-      ${displayText}
-      <div class="timestamp">${time}</div>
-    `;
-
-    chatArea.appendChild(msgDiv);
+  function appendMessage(text, sender = 'bot') {
+    const msg = document.createElement('div');
+    msg.className = `max-w-[80%] break-words rounded-lg px-4 py-2 relative ${sender === 'user' ? 'self-end bg-gradient-to-br from-teal-400 to-indigo-500 text-white' : 'self-start bg-white dark:bg-slate-700 shadow'}`;
+    const html = sender === 'bot' ? marked.parse(text) : marked.parseInline(text);
+    msg.innerHTML = html;
+    chatArea.appendChild(msg);
     chatArea.scrollTop = chatArea.scrollHeight;
-
-    // If from bot, highlight code + attach copy events
-    if (sender === "bot") {
-      setTimeout(() => {
-        // Run highlight.js
-        msgDiv.querySelectorAll('pre code').forEach((block) => {
-          hljs.highlightBlock(block);
-        });
-        // Attach copy button events
-        msgDiv.querySelectorAll('.copy-btn').forEach(btn => {
-          btn.addEventListener('click', () => {
-            const rawCode = btn.dataset.code;
-            navigator.clipboard.writeText(rawCode)
-              .then(() => {
-                btn.textContent = "Copied!";
-                setTimeout(() => { btn.textContent = "Copy"; }, 2000);
-              });
-          });
-        });
-      }, 0);
-    }
-  }
-
-  // ====== Fetch AI Response ======
-  async function fetchAiResponse(userMessage) {
-    if (!aiService) {
-      return "AI is unavailable at the moment.";
-    }
-
-    // If user is requesting code, add extra directive
-    let extraDirective = "";
-    if (/\b(code|codes|snippet)\b/i.test(userMessage)) {
-      extraDirective = "\nPlease provide code in triple backticks format.\n";
-    }
-
-    // Combine system prompt + user message
-    const finalPrompt = `
-${SYSTEM_PROMPT}
-User: ${userMessage}
-${extraDirective}
-Assistant:
-    `;
-
-    // Request (streaming)
-    const aiStream = await aiService.chat(finalPrompt, {
-      model: "claude-opus-4",
-      stream: true
+    msg.querySelectorAll('pre code').forEach(code => {
+      hljs.highlightElement(code);
+      const btn = document.createElement('button');
+      btn.textContent = 'Copy';
+      btn.className = 'absolute top-1 right-1 text-xs bg-gray-200 dark:bg-slate-600 rounded px-1 py-0.5';
+      btn.addEventListener('click', () => {
+        navigator.clipboard.writeText(code.textContent);
+        btn.textContent = 'Copied!';
+        setTimeout(() => (btn.textContent = 'Copy'), 2000);
+      });
+      code.parentElement.classList.add('relative');
+      code.parentElement.appendChild(btn);
     });
+  }
 
-    let fullResponse = "";
+  async function fetchAiResponse(message) {
+    if (!aiService) return 'AI is unavailable at the moment.';
+    const finalPrompt = `${SYSTEM_PROMPT}\nUser: ${message}\nAssistant:`;
+    const aiStream = await aiService.chat(finalPrompt, { model: 'claude-opus-4', stream: true });
+    let full = '';
     for await (const chunk of aiStream) {
-      fullResponse += chunk?.text || "";
+      full += chunk?.text || '';
     }
-
-    // Remove direct mention of "Claude"/"Puter"
-    fullResponse = fullResponse
-      .replace(/claude/gi, "Assistant")
-      .replace(/puter/gi, "our platform");
-
-    return fullResponse;
+    full = full.replace(/claude/gi, 'Assistant').replace(/puter/gi, 'our platform');
+    return full;
   }
 
-  // ====== Process AI Message ======
-  async function processAiMessage(userText) {
-    // 1) Append user message
-    appendMessage(userText, "user");
-
-    // 2) Show "Thinking..." from bot
-    appendMessage("Thinking...", "bot");
-    const allBotMessages = document.querySelectorAll(".bot.message");
-    const thinkingBubble = allBotMessages[allBotMessages.length - 1];
-
+  async function processAiMessage(text) {
+    appendMessage(text, 'user');
+    typing.classList.remove('hidden');
     try {
-      // 3) AI Response
-      const aiReply = await fetchAiResponse(userText);
-
-      // 4) Remove "Thinking..." bubble
-      thinkingBubble.remove();
-
-      // 5) Display final AI message
-      appendMessage(aiReply, "bot");
-
-    } catch (err) {
-      thinkingBubble.textContent = "Something went wrong...";
+      const reply = await fetchAiResponse(text);
+      typing.classList.add('hidden');
+      appendMessage(reply, 'bot');
+    } catch (e) {
+      typing.classList.add('hidden');
+      appendMessage('Something went wrong...', 'bot');
     }
   }
 
-  // ====== Sending Logic (Enter & Button) ======
   function sendMessage() {
     const msg = userInput.value.trim();
     if (!msg) return;
-    userInput.value = "";
+    userInput.value = '';
     processAiMessage(msg);
   }
 
-  // On "Send" button click
-  sendBtn.addEventListener("click", sendMessage);
-
-  // On ENTER key
-  userInput.addEventListener("keydown", (e) => {
-    // If user pressed Enter (without Shift), send
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault(); // prevent newline
+  sendBtn.addEventListener('click', sendMessage);
+  userInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
       sendMessage();
     }
   });
 
-  // Initial greeting
-  appendMessage("Hello! How can I help you today?", "bot");
+  scrollBtn.addEventListener('click', () => {
+    chatArea.scrollTop = chatArea.scrollHeight;
+  });
+
+  resetBtn.addEventListener('click', () => {
+    chatArea.innerHTML = '';
+    appendMessage('Hello! How can I help you today?', 'bot');
+  });
+
+  modeToggle.addEventListener('click', () => {
+    const html = document.documentElement;
+    html.classList.toggle('dark');
+    html.dataset.theme = html.classList.contains('dark') ? 'dark' : 'light';
+  });
+
+  voiceBtn.addEventListener('click', () => alert('Voice to text coming soon!'));
+  regenBtn.addEventListener('click', () => alert('Regenerate not implemented.'));
+  markdownBtn.addEventListener('click', () => alert('Markdown preview not implemented.'));
+
+  appendMessage('Hello! How can I help you today?', 'bot');
 });
