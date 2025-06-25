@@ -1,9 +1,312 @@
-/* Custom animations and utilities */
+/* Base animations and transitions */
 @keyframes typing {
   0% {transform: translateY(0);}
   50% {transform: translateY(-4px);}
   100% {transform: translateY(0);}
 }
+
+@keyframes fadeIn {
+  from {opacity: 0; transform: translateY(10px);}
+  to {opacity: 1; transform: translateY(0);}
+}
+
+@keyframes pulse {
+  0% {box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4);}
+  70% {box-shadow: 0 0 0 10px rgba(99, 102, 241, 0);}
+  100% {box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);}
+}
+
+/* Typing indicator */
 .typing-dot {
   animation: typing 1s infinite;
+}
+
+/* Message animations */
+.message-enter {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Utility classes */
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.5);
+  border-radius: 20px;
+}
+
+/* Auto-expanding textarea */
+.auto-resize {
+  resize: none;
+  overflow: hidden;
+  min-height: 38px;
+  max-height: 200px;
+}
+
+/* Message styling */
+.user-message {
+  background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%);
+  color: white;
+  border-radius: 18px 18px 0 18px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.bot-message {
+  background: white;
+  color: #1f2937;
+  border-radius: 18px 18px 18px 0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.dark .bot-message {
+  background: #334155;
+  color: #f3f4f6;
+}
+
+/* Code blocks */
+pre {
+  border-radius: 6px;
+  position: relative;
+  margin: 1em 0;
+}
+
+pre code {
+  display: block;
+  overflow-x: auto;
+  padding: 1em;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+
+/* File upload preview */
+.file-preview {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 8px;
+  background-color: rgba(249, 250, 251, 0.8);
+}
+
+.dark .file-preview {
+  border-color: #4b5563;
+  background-color: rgba(30, 41, 59, 0.8);
+}
+
+/* Command suggestions */
+.command-suggestions {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  width: 100%;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px 8px 0 0;
+  box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.dark .command-suggestions {
+  background: #1e293b;
+  border-color: #4b5563;
+}
+
+.command-item {
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.command-item:hover {
+  background-color: #f3f4f6;
+}
+
+.dark .command-item:hover {
+  background-color: #334155;
+}
+
+/* Message actions */
+.message-actions {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  display: none;
+}
+
+.message-container:hover .message-actions {
+  display: flex;
+}
+
+/* Reaction button */
+.reaction-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  background-color: #f3f4f6;
+  font-size: 12px;
+  transition: all 0.2s;
+}
+
+.dark .reaction-btn {
+  background-color: #334155;
+}
+
+.reaction-btn:hover {
+  background-color: #e5e7eb;
+}
+
+.dark .reaction-btn:hover {
+  background-color: #475569;
+}
+
+/* Button hover effects */
+.btn-hover {
+  transition: all 0.2s;
+}
+
+.btn-hover:hover {
+  transform: translateY(-1px);
+}
+
+.btn-hover:active {
+  transform: translateY(0);
+}
+
+/* Gradient button */
+.gradient-btn {
+  background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%);
+  transition: all 0.3s;
+}
+
+.gradient-btn:hover {
+  opacity: 0.9;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+/* Floating action button */
+.send-btn {
+  animation: pulse 2s infinite;
+}
+
+/* Settings panel animation */
+.settings-panel {
+  transition: transform 0.3s ease-out;
+}
+
+.settings-panel.hidden {
+  transform: translateX(-100%);
+}
+
+/* Custom checkbox */
+.custom-checkbox {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #d1d5db;
+  border-radius: 4px;
+  background-color: white;
+  cursor: pointer;
+  position: relative;
+}
+
+.dark .custom-checkbox {
+  border-color: #4b5563;
+  background-color: #1e293b;
+}
+
+.custom-checkbox:checked {
+  background-color: #4f46e5;
+  border-color: #4f46e5;
+}
+
+.custom-checkbox:checked::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 5px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 640px) {
+  .user-message, .bot-message {
+    max-width: 90% !important;
+  }
+}
+
+/* Loading skeleton */
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+}
+
+.dark .skeleton {
+  background: linear-gradient(90deg, #334155 25%, #1e293b 50%, #334155 75%);
+  background-size: 200% 100%;
+}
+
+@keyframes skeleton-loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Accessibility focus styles */
+button:focus-visible, input:focus-visible, textarea:focus-visible {
+  outline: 2px solid #4f46e5;
+  outline-offset: 2px;
+}
+
+/* Timestamp tooltip */
+.timestamp {
+  position: absolute;
+  bottom: -6px;
+  font-size: 10px;
+  color: #6b7280;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.message-container:hover .timestamp {
+  opacity: 1;
+}
+
+/* File upload drag area */
+.drag-area {
+  border: 2px dashed #d1d5db;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.drag-area.active {
+  border-color: #4f46e5;
+  background-color: rgba(79, 70, 229, 0.05);
+}
+
+.dark .drag-area {
+  border-color: #4b5563;
+}
+
+.dark .drag-area.active {
+  border-color: #4f46e5;
+  background-color: rgba(79, 70, 229, 0.1);
 }
