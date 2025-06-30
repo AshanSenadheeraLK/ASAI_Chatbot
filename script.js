@@ -39,9 +39,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // Fallback AI response (mock service when puter.ai is unavailable)
   const fallbackAiResponses = {
     greeting: [
-      "Hello! I'm AS AI assistant made by Ashan Senadheera of Sri Lanka. How can I help you today?",
-      "Hi there! I'm AS AI assistant made by Ashan Senadheera of Sri Lanka. What can I do for you?",
-      "Good day! I'm AS AI assistant made by Ashan Senadheera of Sri Lanka. I'm here to assist you!"
+      "Hello! I'm AS AI Assistant. How can I help you today?",
+      "Hi there! I'm AS AI Assistant. What can I do for you?",
+      "Good day! I'm AS AI Assistant. I'm here to assist you!"
     ],
     unavailable: [
       "I'm having trouble connecting to the AI service. Please make sure you're logged in to use this chatbot.",
@@ -90,19 +90,19 @@ document.addEventListener('DOMContentLoaded', () => {
     professional: `You are an AI assistant with a professional demeanor.
 1. Maintain a formal tone with clear, concise responses.
 2. Prioritize accuracy and clarity in your answers.
-3. If asked who or what you are, say "i am AS AI assistant made by Ashan Senadheera of Sri Lanka".
+3. If asked who or what you are, say "I am AS AI Assistant".
 4. Use proper formatting and structure in responses.`,
     
     friendly: `You are an AI assistant with a friendly, conversational demeanor.
 1. Use a warm, casual tone while remaining helpful.
 2. Feel free to use appropriate emojis occasionally 😊.
-3. If asked who or what you are, say "i am AS AI assistant made by Ashan Senadheera of Sri Lanka".
+3. If asked who or what you are, say "I am AS AI Assistant".
 4. Make complex topics accessible with simple explanations.`,
     
     concise: `You are an AI assistant focused on brevity.
 1. Provide short, direct answers with minimal explanation.
 2. Use bullet points when listing multiple items.
-3. If asked who or what you are, say "i am AS AI assistant made by Ashan Senadheera of Sri Lanka".
+3. If asked who or what you are, say "I am AS AI Assistant".
 4. Optimize for quick, efficient responses.`
   };
 
@@ -112,6 +112,11 @@ document.addEventListener('DOMContentLoaded', () => {
     2: 'default',
     3: 'detailed'
   };
+
+  function isIdentityQuestion(text) {
+    const lower = text.toLowerCase();
+    return ['who are you', "what is your name", "what's your name"].some(q => lower.includes(q));
+  }
 
   // Initialize from localStorage if available
   function initializeFromLocalStorage() {
@@ -476,7 +481,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (aiService) {
         try {
           // Try to use the real AI service
-          aiStream = await aiService.chat(finalPrompt, { model: 'claude-opus-4', stream: true });
+          aiStream = await aiService.chat(finalPrompt, { model: 'microsoft/Phi-4-multimodal-instruct', stream: true });
         } catch (error) {
           console.warn('AI service unavailable, using fallback:', error);
           // If there's an error with the AI service, use the fallback
@@ -606,6 +611,18 @@ document.addEventListener('DOMContentLoaded', () => {
       saveToLocalStorage();
       updateChatHistory();
       lastUserMessage = text;
+
+      if (isIdentityQuestion(text)) {
+        const idReply = 'I am AS AI Assistant.';
+        appendMessageToUI(idReply, 'bot');
+        messageHistory.push({
+          sender: 'bot',
+          text: idReply,
+          timestamp: new Date().toISOString()
+        });
+        saveToLocalStorage();
+        return;
+      }
     }
     
     typing.classList.remove('hidden');
@@ -642,21 +659,47 @@ document.addEventListener('DOMContentLoaded', () => {
     if (text.startsWith('@image ')) {
       const prompt = text.substring(7);
       appendMessageToUI(`Generating image: "${prompt}"...`, 'bot');
-      
-      // Simulate image generation (in a real app, call an image generation API)
-      setTimeout(() => {
-        const placeholderImage = `https://placehold.co/600x400/4f46e5/ffffff?text=${encodeURIComponent(prompt)}`;
-        const imageMarkdown = `![${prompt}](${placeholderImage})`;
-        appendMessageToUI(imageMarkdown, 'bot');
-        
-        messageHistory.push({
-          sender: 'bot',
-          text: imageMarkdown,
-          timestamp: new Date().toISOString()
-        });
-        saveToLocalStorage();
-      }, 1500);
-      
+
+      if (aiService && typeof aiService.txt2img === 'function') {
+        aiService.txt2img(prompt, { testMode: true })
+          .then(url => {
+            const imageMarkdown = `![${prompt}](${url})`;
+            appendMessageToUI(imageMarkdown, 'bot');
+
+            messageHistory.push({
+              sender: 'bot',
+              text: imageMarkdown,
+              timestamp: new Date().toISOString()
+            });
+            saveToLocalStorage();
+          })
+          .catch(() => {
+            const placeholderImage = `https://placehold.co/600x400/4f46e5/ffffff?text=${encodeURIComponent(prompt)}`;
+            const imageMarkdown = `![${prompt}](${placeholderImage})`;
+            appendMessageToUI(imageMarkdown, 'bot');
+
+            messageHistory.push({
+              sender: 'bot',
+              text: imageMarkdown,
+              timestamp: new Date().toISOString()
+            });
+            saveToLocalStorage();
+          });
+      } else {
+        setTimeout(() => {
+          const placeholderImage = `https://placehold.co/600x400/4f46e5/ffffff?text=${encodeURIComponent(prompt)}`;
+          const imageMarkdown = `![${prompt}](${placeholderImage})`;
+          appendMessageToUI(imageMarkdown, 'bot');
+
+          messageHistory.push({
+            sender: 'bot',
+            text: imageMarkdown,
+            timestamp: new Date().toISOString()
+          });
+          saveToLocalStorage();
+        }, 1500);
+      }
+
       return true;
     }
     
